@@ -1,5 +1,3 @@
-import { kill } from "process";
-
 const killerContent = [
   {
     title: "Bones",
