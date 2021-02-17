@@ -6,17 +6,27 @@ const port = 3000;
 
 app.get("/", (request, response) => {
   const searchTerm = request.query.search?.toLowerCase() || "";
-  const minRating = Number(request.query.minrating) || 0;
-  const maxRating = Number(request.query.maxrating) || 5;
+  let minRating = Number(request.query.minrating);
+  let maxRating = Number(request.query.maxrating);
   let filteredContent = [...killerContent];
 
-  // if (isNaN(minRating) || isNaN(maxRating)) {
-  //   response.status(400).json({
-  //     message: `${minRating || maxRating} is not a valid rating`,
-  //     results: [],
-  //   });
-  //   return;
-  // }
+  if (request.query.minrating !== undefined && isNaN(minRating)) {
+    response.status(400).json({
+      message: `Invalid minrating: ${request.query.minrating}`,
+      results: [],
+    });
+    return;
+  }
+  if (request.query.maxrating !== undefined && isNaN(maxRating)) {
+    response.status(400).json({
+      message: `Invalid maxrating: ${request.query.maxrating}`,
+      results: [],
+    });
+    return;
+  }
+
+  minRating = minRating || 0;
+  maxRating = maxRating || 5;
 
   if (searchTerm) {
     filteredContent = filteredContent.filter(
@@ -35,12 +45,6 @@ app.get("/", (request, response) => {
   if (maxRating) {
     filteredContent = filteredContent.filter(
       (content) => content.rating <= maxRating
-    );
-  }
-
-  if (minRating && maxRating) {
-    filteredContent = filteredContent.filter(
-      (content) => content.rating >= minRating && content.rating <= maxRating
     );
   }
 
